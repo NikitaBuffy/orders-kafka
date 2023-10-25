@@ -2,6 +2,7 @@ package ru.pominov.customer.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pominov.customer.dto.OrderDto;
 import ru.pominov.customer.service.OrderService;
@@ -21,7 +22,7 @@ public class OrderController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createOrder(@RequestHeader("X-Customer-Id") String customerId, @RequestBody OrderDto orderDto) {
+    public void createOrder(@RequestHeader("X-Customer-Id") String customerId, @Validated @RequestBody OrderDto orderDto) {
         orderService.createOrder(customerId, orderDto);
     }
 }
