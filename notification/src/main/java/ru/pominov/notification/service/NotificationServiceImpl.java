@@ -3,6 +3,7 @@ package ru.pominov.notification.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.pominov.notification.model.OrderNotification;
 
 @Service
 @Slf4j
@@ -14,9 +15,9 @@ public class NotificationServiceImpl implements NotificationService {
         System.out.println("Заказ №" + orderId + " имеет статус " + orderStatus);
     }
 
-    // TODO: 18.10.2023 Проверить успешный пул из кафки
     @Override
-    public void listener(String customerId, Long orderId, String orderStatus) {
-        notifyCustomer(customerId, orderId, orderStatus);
+    public void listener(OrderNotification notification) {
+        // Проверка прослушивания топика
+        System.out.println(notification);
     }
 }

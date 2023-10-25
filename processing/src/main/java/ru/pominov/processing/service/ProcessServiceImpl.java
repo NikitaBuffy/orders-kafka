@@ -1,21 +1,24 @@
 package ru.pominov.processing.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.pominov.processing.model.Item;
 import ru.pominov.processing.model.Order;
+import ru.pominov.processing.model.OrderNotification;
 import ru.pominov.processing.model.OrderStatus;
 import ru.pominov.processing.repository.OrderRepository;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProcessServiceImpl implements ProcessService {
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
+    private final KafkaTemplate<String, OrderNotification> kafkaTemplate;
+    @Value("${kafka.topic}")
+    private String kafkaTopic;
     private final OrderRepository orderRepository;
 
     /**
@@ -27,25 +30,40 @@ public class ProcessServiceImpl implements ProcessService {
      */
     @Override
     public void processOrder(Order order) {
-        executorService.submit(() -> {
-            order.setStatus(OrderStatus.PROCESSING);
+        Order createdOrder = orderRepository.save(order);
+        createdOrder.setStatus(OrderStatus.PROCESSING);
 
-            int totalAmount = 0;
-            for (Item item : order.getItems()) {
-                totalAmount += item.getPrice();
-            }
-            order.setTotalAmount(totalAmount);
-            order.setStatus(OrderStatus.DELIVERY_READY);
+        // Отправка статуса "В обработке"
+        sendOrderStatus(new OrderNotification(createdOrder.getId(), createdOrder.getCustomerId(), createdOrder.getStatus().name()));
 
-            orderRepository.save(order);
-        });
+        // Имитация обработки заказа
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-        executorService.shutdown();
+        int totalAmount = 0;
+        for (Item item : order.getItems()) {
+            totalAmount += item.getPrice();
+        }
+        createdOrder.setTotalAmount(totalAmount);
+        createdOrder.setStatus(OrderStatus.DELIVERY_READY);
+        orderRepository.save(createdOrder);
+
+        // Отправка статуса "Готово к отправке"
+        sendOrderStatus(new OrderNotification(createdOrder.getId(), createdOrder.getCustomerId(), createdOrder.getStatus().name()));
     }
 
     @Override
     public void listener(Order order) {
         log.info("Received {} from Kafka topic 'new-order'", order);
         processOrder(order);
+    }
+
+    @Override
+    public void sendOrderStatus(OrderNotification notification) {
+        kafkaTemplate.send(kafkaTopic, notification);
+        log.info("Sent {} to Kafka topic {}", notification, kafkaTopic);
     }
 }

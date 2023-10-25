@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class Order {
     private Long id;
 
     @Column(name = "customer_id")
-    private int customerId;
+    private Long customerId;
 
     @Column(name = "customer_name")
     private String customerName;
@@ -42,7 +41,6 @@ public class Order {
     @Column(name = "delivery_address")
     private String deliveryAddress;
 
-    @Future
     @Column(name = "delivery_date")
     private LocalDateTime date;
 
