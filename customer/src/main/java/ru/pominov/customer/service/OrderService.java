@@ -5,7 +5,7 @@ import ru.pominov.customer.model.Order;
 
 public interface OrderService {
 
-    void createOrder(String customerId, OrderDto orderDto);
+    void createOrder(Long customerId, OrderDto orderDto);
 
     void sendOrder(Order order);
 }

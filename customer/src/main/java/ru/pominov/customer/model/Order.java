@@ -13,7 +13,7 @@ public class Order {
     /**
      * Идентификатор пользователя
      */
-    private String customerId;
+    private Long customerId;
 
     private String customerName;
 

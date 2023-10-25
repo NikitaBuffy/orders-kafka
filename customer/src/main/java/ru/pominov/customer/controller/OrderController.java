@@ -22,7 +22,7 @@ public class OrderController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createOrder(@RequestHeader("X-Customer-Id") String customerId, @Validated @RequestBody OrderDto orderDto) {
+    public void createOrder(@RequestHeader("X-Customer-Id") Long customerId, @Validated @RequestBody OrderDto orderDto) {
         orderService.createOrder(customerId, orderDto);
     }
 }

@@ -9,7 +9,6 @@ import javax.validation.constraints.Future;
 import java.time.LocalDateTime;
 import java.util.List;
 
-// TODO: 18.10.2023 Настроить базу данных
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,8 +21,8 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    @Transient
-    private String customerId;
+    @Column(name = "customer_id")
+    private int customerId;
 
     @Column(name = "customer_name")
     private String customerName;
@@ -47,6 +46,6 @@ public class Order {
     @Column(name = "delivery_date")
     private LocalDateTime date;
 
-    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 }

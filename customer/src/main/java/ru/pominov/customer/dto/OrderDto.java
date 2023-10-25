@@ -17,19 +17,21 @@ public class OrderDto {
      * Имя клиента
      */
     @NotBlank
+    @Size(max = 50)
     private String customerName;
 
     /**
-     * Телефон клиента
+     * Телефон клиента (в формате "+* (***) ***-**-**")
      */
     @NotBlank
-    @Size(min = 11, max = 16)
+    @Size(min = 18, max = 18)
     private String customerPhone;
 
     /**
      * Электронная почта клиента
      */
     @Email
+    @Size(max = 50)
     private String customerEmail;
 
     /**

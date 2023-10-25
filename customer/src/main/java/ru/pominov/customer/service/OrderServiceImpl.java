@@ -24,7 +24,7 @@ public class OrderServiceImpl implements OrderService {
     private String kafkaTopic;
 
     @Override
-    public void createOrder(String customerId, OrderDto orderDto) {
+    public void createOrder(Long customerId, OrderDto orderDto) {
         itemsValidation(orderDto.getItems());
 
         Order order = OrderMapper.toOrder(orderDto);

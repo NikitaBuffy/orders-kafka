@@ -18,7 +18,13 @@ public class ProcessServiceImpl implements ProcessService {
     private final ExecutorService executorService = Executors.newFixedThreadPool(5);
     private final OrderRepository orderRepository;
 
-    // TODO: 18.10.2023 Доработать метод
+    /**
+     * Метод занимается обработкой заказа.
+     * Рассчитывает общую цену заказа, генерирует уникальный идентификатор заказа, устанавливает статусы по мере обработки.
+     * Можно добавить иную обработку (проверка товаров в наличии, расчет налогов, подготовка к доставке и т.д.)
+     *
+     * @param order - данные заказа, полученные от Customer Service через Kafka по топику 'new-order'
+     */
     @Override
     public void processOrder(Order order) {
         executorService.submit(() -> {
@@ -29,24 +35,17 @@ public class ProcessServiceImpl implements ProcessService {
                 totalAmount += item.getPrice();
             }
             order.setTotalAmount(totalAmount);
+            order.setStatus(OrderStatus.DELIVERY_READY);
 
-            String address = order.getDeliveryAddress();
-            if (!address.startsWith("Санкт-Петербург")) {
-                log.debug("Мы доставляем товары только по Санкт-Петербургу");
-                order.setStatus(OrderStatus.CANCELED);
-            }
-
-            Order createdOrder = orderRepository.save(order);
-            createdOrder.setStatus(OrderStatus.DELIVERY_READY);
+            orderRepository.save(order);
         });
 
         executorService.shutdown();
     }
 
-    // TODO: 18.10.2023 Проверить успешный пул из кафки
     @Override
     public void listener(Order order) {
-        System.out.println(order);
+        log.info("Received {} from Kafka topic 'new-order'", order);
         processOrder(order);
     }
 }
