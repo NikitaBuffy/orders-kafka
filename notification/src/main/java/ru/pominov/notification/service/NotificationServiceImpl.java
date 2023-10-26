@@ -10,6 +10,12 @@ import ru.pominov.notification.model.OrderNotification;
 @AllArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
+    /**
+     * Присылает уведомление пользователю о статусе его заказа
+     * Метод отправляет уведомление в консоль для примера
+     *
+     * @param notification объект уведомления {@link ru.pominov.notification.model.OrderNotification}
+     */
     public void notifyCustomer(OrderNotification notification) {
         String status = "";
         switch(notification.getStatus()) {

@@ -15,10 +15,10 @@ public class OrderController {
     private final OrderService orderService;
 
     /**
-     * Создает заказ и отправляет его в сервис обработки
+     * Принимает заказ по API, создает объект и отправляет его на обработку
      *
-     * @param customerId - идентификатор клиента
-     * @param orderDto - данные заказа
+     * @param customerId идентификатор клиента
+     * @param orderDto данные заказа
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

@@ -26,7 +26,7 @@ public class ProcessServiceImpl implements ProcessService {
      * Рассчитывает общую цену заказа, генерирует уникальный идентификатор заказа, устанавливает статусы по мере обработки.
      * Можно добавить иную обработку (проверка товаров в наличии, расчет налогов, подготовка к доставке и т.д.)
      *
-     * @param order - данные заказа, полученные от Customer Service через Kafka по топику 'new-order'
+     * @param order данные заказа, полученные от Customer Service через Kafka по топику 'new-order'
      */
     @Override
     public void processOrder(Order order) {
@@ -61,6 +61,11 @@ public class ProcessServiceImpl implements ProcessService {
         processOrder(order);
     }
 
+    /**
+     * Отправка уведомления в топик Kafka
+     *
+     * @param notification объект уведомления {@link ru.pominov.processing.model.OrderNotification}
+     */
     @Override
     public void sendOrderStatus(OrderNotification notification) {
         kafkaTemplate.send(kafkaTopic, notification);

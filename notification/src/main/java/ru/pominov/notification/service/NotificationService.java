@@ -5,6 +5,9 @@ import ru.pominov.notification.model.OrderNotification;
 
 public interface NotificationService {
 
+    /**
+     * @see ru.pominov.notification.service.NotificationServiceImpl#notifyCustomer
+     */
     void notifyCustomer(OrderNotification notification);
 
     @KafkaListener(topics = "notification", groupId = "orders-kafka")

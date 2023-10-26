@@ -23,6 +23,13 @@ public class OrderServiceImpl implements OrderService {
     @Value("${kafka.topic}")
     private String kafkaTopic;
 
+    /**
+     * Метод преобразует полученные данные в объект {@link ru.pominov.customer.model.Order}.
+     * Проводит валидацию товаров в заказе
+     *
+     * @param customerId идентификатор клиента
+     * @param orderDto заказ
+     */
     @Override
     public void createOrder(Long customerId, OrderDto orderDto) {
         itemsValidation(orderDto.getItems());
@@ -36,6 +43,11 @@ public class OrderServiceImpl implements OrderService {
         sendOrder(order);
     }
 
+    /**
+     * Отправка заказа в топик Kafka
+     *
+     * @param order объект заказа {@link ru.pominov.customer.model.Order}
+     */
     @Override
     public void sendOrder(Order order) {
         kafkaTemplate.send(kafkaTopic, order);
