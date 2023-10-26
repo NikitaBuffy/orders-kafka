@@ -5,7 +5,7 @@ import ru.pominov.notification.model.OrderNotification;
 
 public interface NotificationService {
 
-    void notifyCustomer(String customerId, Long orderId, String orderStatus);
+    void notifyCustomer(OrderNotification notification);
 
     @KafkaListener(topics = "notification", groupId = "orders-kafka")
     void listener(OrderNotification notification);

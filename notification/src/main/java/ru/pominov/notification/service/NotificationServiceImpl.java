@@ -10,14 +10,32 @@ import ru.pominov.notification.model.OrderNotification;
 @AllArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
-    // TODO: 18.10.2023 Реализовать метод уведомлений
-    public void notifyCustomer(String customerId, Long orderId, String orderStatus) {
-        System.out.println("Заказ №" + orderId + " имеет статус " + orderStatus);
+    public void notifyCustomer(OrderNotification notification) {
+        String status = "";
+        switch(notification.getStatus()) {
+            case "DELIVERY_READY":
+                status = "Готов к отправке.";
+                break;
+            case "IN_DELIVERY":
+                status = "Отправлен.";
+                break;
+            case "CANCELED":
+                status = "Отменен.";
+                break;
+            case "PROCESSING":
+                status = "В обработке.";
+                break;
+        }
+
+        System.out.println("Изменение статуса заказа №" + notification.getOrderId()
+                + ". Новый статус: " + status);
+        log.info("Notification sent. Customer ID: {}, order ID: {}, status: {}.",
+                notification.getCustomerId(), notification.getOrderId(), notification.getStatus());
     }
 
     @Override
     public void listener(OrderNotification notification) {
-        // Проверка прослушивания топика
-        System.out.println(notification);
+        log.info("Received {} from Kafka topic 'notification'", notification);
+        notifyCustomer(notification);
     }
 }
